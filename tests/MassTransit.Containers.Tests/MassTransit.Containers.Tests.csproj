@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Appveyor.TestLogger" Version="2.0.0" />
     <PackageReference Include="Lamar" Version="5.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="NUnit" Version="3.13.1" />
@@ -20,6 +19,7 @@
     <ProjectReference Include="..\..\src\Containers\MassTransit.StructureMapIntegration\MassTransit.StructureMapIntegration.csproj" />
     <ProjectReference Include="..\..\src\Containers\MassTransit.WindsorIntegration\MassTransit.WindsorIntegration.csproj" />
     <ProjectReference Include="..\..\src\Containers\MassTransit.ExtensionsDependencyInjectionIntegration\MassTransit.ExtensionsDependencyInjectionIntegration.csproj" />
+    <ProjectReference Include="..\MassTransit.TestComponents\MassTransit.TestComponents.csproj" />
   </ItemGroup>
 
 </Project>

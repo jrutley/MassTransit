@@ -2,10 +2,10 @@ namespace MassTransit
 {
     using System;
     using Automatonymous;
-    using Conductor;
     using ConsumeConfigurators;
     using Courier;
     using Definition;
+    using Futures;
     using Registration;
     using Saga;
 
@@ -211,12 +211,6 @@ namespace MassTransit
         void AddRequestClient(Type requestType, Uri destinationAddress, RequestTimeout timeout = default);
 
         /// <summary>
-        /// Adds the service client, which enables service discovery via Conductor
-        /// </summary>
-        /// <param name="configure">Configure the service client</param>
-        void AddServiceClient(Action<IServiceClientConfigurator> configure = default);
-
-        /// <summary>
         /// Set the default endpoint name formatter used for endpoint names
         /// </summary>
         /// <param name="endpointNameFormatter"></param>
@@ -243,5 +237,27 @@ namespace MassTransit
         /// </summary>
         /// <param name="provider"></param>
         void SetSagaRepositoryProvider(ISagaRepositoryRegistrationProvider provider);
+
+        /// <summary>
+        /// Adds a future registration, along with an optional definition
+        /// </summary>
+        /// <param name="futureDefinitionType">The future definition type</param>
+        /// <typeparam name="TFuture"></typeparam>
+        IFutureRegistrationConfigurator<TFuture> AddFuture<TFuture>(Type futureDefinitionType = null)
+            where TFuture : MassTransitStateMachine<FutureState>;
+
+        /// <summary>
+        /// Adds a future registration, along with an optional definition
+        /// </summary>
+        /// <param name="futureType"></param>
+        /// <param name="futureDefinitionType">The future definition type</param>
+        void AddFuture(Type futureType, Type futureDefinitionType = null);
+
+        /// <summary>
+        /// Adds a method that is called for each receive endpoint when it is configured, allowing additional
+        /// configuration to be specified.
+        /// </summary>
+        /// <param name="callback">Callback invoked for each receive endpoint</param>
+        void AddConfigureEndpointsCallback(ConfigureEndpointsCallback callback);
     }
 }

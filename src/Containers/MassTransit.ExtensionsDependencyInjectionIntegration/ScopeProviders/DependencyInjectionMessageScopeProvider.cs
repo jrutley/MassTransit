@@ -4,6 +4,7 @@ namespace MassTransit.ExtensionsDependencyInjectionIntegration.ScopeProviders
     using Context;
     using GreenPipes;
     using Microsoft.Extensions.DependencyInjection;
+    using Registration;
     using Scoping;
     using Scoping.ConsumerContexts;
 
@@ -28,7 +29,7 @@ namespace MassTransit.ExtensionsDependencyInjectionIntegration.ScopeProviders
         {
             if (context.TryGetPayload<IServiceScope>(out var existingServiceScope))
             {
-                existingServiceScope.UpdateScope(context);
+                existingServiceScope.SetCurrentConsumeContext(context);
 
                 return new ExistingMessageScopeContext<T>(context);
             }
@@ -39,9 +40,11 @@ namespace MassTransit.ExtensionsDependencyInjectionIntegration.ScopeProviders
             var serviceScope = serviceProvider.CreateScope();
             try
             {
-                var scopeContext = new ConsumeContextScope<T>(context, serviceScope, serviceScope.ServiceProvider);
+                var scopeServiceProvider = new DependencyInjectionScopeServiceProvider(serviceScope.ServiceProvider);
 
-                serviceScope.UpdateScope(scopeContext);
+                var scopeContext = new ConsumeContextScope<T>(context, serviceScope, serviceScope.ServiceProvider, scopeServiceProvider);
+
+                serviceScope.SetCurrentConsumeContext(scopeContext);
 
                 return new CreatedMessageScopeContext<IServiceScope, T>(serviceScope, scopeContext);
             }

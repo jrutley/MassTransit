@@ -7,6 +7,7 @@ namespace MassTransit.ExtensionsDependencyInjectionIntegration.ScopeProviders
     using Context;
     using GreenPipes;
     using Microsoft.Extensions.DependencyInjection;
+    using Registration;
     using Saga;
 
 
@@ -56,7 +57,7 @@ namespace MassTransit.ExtensionsDependencyInjectionIntegration.ScopeProviders
 
             if (context.TryGetPayload<IServiceScope>(out var existingScope))
             {
-                existingScope.UpdateScope(context);
+                existingScope.SetCurrentConsumeContext(context);
 
                 context.GetOrAddPayload(() => existingScope.ServiceProvider.GetService<IStateMachineActivityFactory>()
                     ?? DependencyInjectionStateMachineActivityFactory.Instance);
@@ -70,18 +71,18 @@ namespace MassTransit.ExtensionsDependencyInjectionIntegration.ScopeProviders
             {
                 using var serviceScope = serviceProvider.CreateScope();
 
-                var scopeServiceProvider = serviceScope.ServiceProvider;
+                var scopeServiceProvider = new DependencyInjectionScopeServiceProvider(serviceScope.ServiceProvider);
 
-                var scopeContext = new ConsumeContextScope<T>(context, serviceScope, scopeServiceProvider);
+                var scopeContext = new ConsumeContextScope<T>(context, serviceScope, serviceScope.ServiceProvider, scopeServiceProvider);
 
-                serviceScope.UpdateScope(scopeContext);
+                serviceScope.SetCurrentConsumeContext(scopeContext);
 
-                var activityFactory = scopeServiceProvider.GetService<IStateMachineActivityFactory>()
+                var activityFactory = serviceScope.ServiceProvider.GetService<IStateMachineActivityFactory>()
                     ?? DependencyInjectionStateMachineActivityFactory.Instance;
 
                 var consumeContextScope = new ConsumeContextScope<T>(scopeContext, activityFactory);
 
-                var factory = scopeServiceProvider.GetRequiredService<ISagaRepositoryContextFactory<TSaga>>();
+                var factory = serviceScope.ServiceProvider.GetRequiredService<ISagaRepositoryContextFactory<TSaga>>();
 
                 await send(consumeContextScope, factory).ConfigureAwait(false);
             }

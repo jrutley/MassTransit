@@ -44,6 +44,7 @@ MassTransit NuGet Packages
 | [MassTransit.Prometheus][Prometheus.nuget] | 2.0 |
 | **Persistence** |
 | [MassTransit.Azure.Cosmos][Cosmos.nuget] | 2.0 |
+| [MassTransit.Azure.Storage][AzureStorage.nuget] | 2.0 |
 | [MassTransit.Dapper][Dapper.nuget] | 2.0 |
 | [MassTransit.EntityFrameworkCore][EFCore.nuget] | 2.0 |
 | [MassTransit.EntityFramework][EF.nuget] | 2.1 |
@@ -58,6 +59,7 @@ MassTransit NuGet Packages
 | [MassTransit.ActiveMQ][ActiveMQ.nuget] | 2.0 |
 | [MassTransit.AmazonSQS][AmazonSQS.nuget] | 2.0 |
 | [MassTransit.Azure.ServiceBus.Core][AzureSbCore.nuget] | 2.0 |
+| [MassTransit.Grpc][Grpc.nuget] | 2.0 |
 | [MassTransit.RabbitMQ][RabbitMQ.nuget] | 2.0 |
 | [MassTransit.WebJobs.EventHubs][EventHubs.nuget] | 2.0 |
 | [MassTransit.WebJobs.ServiceBus][AzureFunc.nuget] | 2.0 |
@@ -122,6 +124,7 @@ Logo Design by _The Agile Badger_
 [Prometheus.nuget]: https://www.nuget.org/packages/MassTransit.Prometheus
 
 [Cosmos.nuget]: https://www.nuget.org/packages/MassTransit.Azure.Cosmos
+[AzureStorage.nuget]: https://www.nuget.org/packages/MassTransit.Azure.Storage
 [Dapper.nuget]: https://www.nuget.org/packages/MassTransit.Dapper
 [EFCore.nuget]: https://www.nuget.org/packages/MassTransit.EntityFrameworkCore
 [EF.nuget]: https://www.nuget.org/packages/MassTransit.EntityFramework
@@ -136,6 +139,7 @@ Logo Design by _The Agile Badger_
 [ActiveMQ.nuget]: https://www.nuget.org/packages/MassTransit.ActiveMQ
 [AmazonSQS.nuget]: https://www.nuget.org/packages/MassTransit.AmazonSQS
 [AzureSbCore.nuget]: https://www.nuget.org/packages/MassTransit.Azure.ServiceBus.Core
+[Grpc.nuget]: https://www.nuget.org/packages/MassTransit.Grpc
 [RabbitMQ.nuget]: https://www.nuget.org/packages/MassTransit.RabbitMQ
 [EventHubs.nuget]: https://www.nuget.org/packages/MassTransit.WebJobs.EventHubs
 [AzureFunc.nuget]: https://www.nuget.org/packages/MassTransit.WebJobs.ServiceBus

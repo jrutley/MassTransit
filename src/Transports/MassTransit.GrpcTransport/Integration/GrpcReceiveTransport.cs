@@ -72,7 +72,7 @@ namespace MassTransit.GrpcTransport.Integration
         class ReceiveTransportAgent :
             Agent,
             ReceiveTransportHandle,
-            IGrpcQueueConsumer
+            IMessageReceiver
         {
             readonly Channel<GrpcTransportMessage> _channel;
             readonly Task _consumeDispatcher;
@@ -108,7 +108,7 @@ namespace MassTransit.GrpcTransport.Integration
                 SetReady(startup);
             }
 
-            public async Task Consume(GrpcTransportMessage message, CancellationToken cancellationToken)
+            public async Task Deliver(GrpcTransportMessage message, CancellationToken cancellationToken)
             {
                 if (IsStopped)
                     return;
@@ -138,7 +138,7 @@ namespace MassTransit.GrpcTransport.Integration
 
                         _ = Task.Run(async () =>
                         {
-                            await using var context = new GrpcReceiveContext(message, _context, Stopping);
+                            var context = new GrpcReceiveContext(message, _context);
                             try
                             {
                                 await _dispatcher.Dispatch(context).ConfigureAwait(false);
@@ -177,16 +177,16 @@ namespace MassTransit.GrpcTransport.Integration
                     var queue = _context.MessageFabric.GetQueue(hostNodeContext, _queueName);
 
                     IDeadLetterTransport deadLetterTransport =
-                        new GrpcMessageDeadLetterTransport(_context.MessageFabric.GetExchange(hostNodeContext, $"{_queueName}_skipped"));
+                        new GrpcDeadLetterTransport(_context.MessageFabric.GetExchange(hostNodeContext, $"{_queueName}_skipped"));
                     _context.AddOrUpdatePayload(() => deadLetterTransport, _ => deadLetterTransport);
 
                     IErrorTransport errorTransport =
-                        new GrpcMessageErrorTransport(_context.MessageFabric.GetExchange(hostNodeContext, $"{_queueName}_error"));
+                        new GrpcErrorTransport(_context.MessageFabric.GetExchange(hostNodeContext, $"{_queueName}_error"));
                     _context.AddOrUpdatePayload(() => errorTransport, _ => errorTransport);
 
                     _context.ConfigureTopology(hostNodeContext);
 
-                    _topologyHandle = queue.ConnectConsumer(hostNodeContext, this);
+                    _topologyHandle = queue.ConnectMessageReceiver(hostNodeContext, this);
 
                     await _context.TransportObservers.Ready(new ReceiveTransportReadyEvent(_context.InputAddress));
                 }
@@ -218,6 +218,12 @@ namespace MassTransit.GrpcTransport.Integration
                 _topologyHandle?.Disconnect();
 
                 await base.StopAgent(context).ConfigureAwait(false);
+            }
+
+            public void Probe(ProbeContext context)
+            {
+                var scope = context.CreateScope("local");
+                scope.Add("nodeAddress", _context.TransportProvider.HostNodeContext.NodeAddress);
             }
         }
     }
